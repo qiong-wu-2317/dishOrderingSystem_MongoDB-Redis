@@ -1,0 +1,28 @@
+<form method="GET" action="/<%= action %>" class="mt-3">
+    <label for="pageSize">Items per page:</label>
+    <select name="pageSize" id="pageSize" onchange="this.form.submit()">
+        <option value="6" <%= pageSize == 6 ? 'selected' : '' %>>6</option>
+        <option value="12" <%= pageSize == 12 ? 'selected' : '' %>>12</option>
+        <option value="24" <%= pageSize == 24 ? 'selected' : '' %>>24</option>
+    </select>
+    <input type="hidden" name="page" value="<%= currentPage %>">
+    <input type="hidden" name="query" value="<%= query %>"> <!-- Include search query -->
+</form>
+
+<!-- Pagination Controls -->
+<div class="pagination mt-3">
+    <% if (currentPage > 1) { %>
+        <a href="/<%= action %>?currentPage=<%= currentPage - 1 %>&pageSize=<%= pageSize %>&query=<%= query %>" class="btn btn-secondary">Previous</a>
+    <% } %>
+    
+    <!-- Display page numbers -->
+    <% for (let i = 1; i <= totalPages; i++) { %>
+        <a href="/<%= action %>?currentPage=<%= i %>&pageSize=<%= pageSize %>&query=<%= query %>" class="btn <%= i === currentPage ? 'btn-primary' : 'btn-outline-secondary' %>">
+            <%= i %>
+        </a>
+    <% } %>
+    
+    <% if (currentPage < totalPages) { %>
+        <a href="/<%= action %>?currentPage=<%= currentPage + 1 %>&pageSize=<%= pageSize %>&query=<%= query %>" class="btn btn-secondary">Next</a>
+    <% } %>
+</div>

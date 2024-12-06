@@ -1,0 +1,7 @@
+{
+	id,
+	restaurant_name,
+	address,
+	open_time,
+	contact
+}

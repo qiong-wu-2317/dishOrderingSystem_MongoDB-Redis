@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <%- include("../components/head.ejs") %>
+
+  <body>
+    <%- include("../components/navBar.ejs") %>
+
+
+    <div class="container">
+      <h1>Dish Manager</h1>
+
+      
+      <% if (msg) { %>
+        <div class="alert alert-primary">
+          <%= msg %>
+        </div>
+      <% } %>
+
+
+      <div class="row">
+        <div class="col-8">
+          <%- include("../components/searchBar.ejs", { action:'dishes', query }) %>
+            <div class="row g-3" style="margin-top: 10px;">
+              <% for (let dish of dishes) { %>
+                <div class="col-4">
+                  <div class="card p-1">
+                    <h5 class="card-title"><%= dish.dish_name %></h5>
+                    <div class="card-text">
+                        <div><span style="color: grey;">Restaurant:</span> <%= dish.restaurant.restaurant_name %></div>
+                        <div><span style="color: grey;">Price:</span> <%= dish.price %></div>
+                        <div><span style="color: grey;">Introduction:</span> <%= dish.introduction %></div>                        
+                      <div>
+                        <a class="btn btn-outline-primary" href="<%= '/dishes/' + dish.dish_id + '/edit' %>">Edit</a>
+                        <a class="btn btn-outline-danger" href="<%= '/dishes/' + dish.dish_id + '/delete' %>">Delete</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+              <% } %>
+
+            <%- include("../components/pagination.ejs", { action:'dishes', currentPage, pageSize, totalPages, query }) %>
+            </div>
+        </div>
+        <div class="col-4">
+          <h2>Create a Dish</h2>
+          <form action="/createDish" method="POST">
+            <div>
+              <label class="form-label">
+                Dish Name:
+                <input class="form-control" type="text" name="dish_name" required />
+              </label>
+            </div>
+
+            <div>
+              <label class="form-label">
+                Restuarant:
+                <select id="restaurant" name="restaurant_id" class="form-control" required>
+                    <option value="" disabled selected>Select a restaurant</option>
+                    <% for (let rest of restaurants) { %>
+                        <option value="<%= rest.restaurant_id %>"><%= rest.restaurant_name %></option>
+                    <% } %>
+                  </select>
+              </label>
+            </div>
+
+            <div>
+              <label class="form-label">
+                Price:
+                <input class="form-control" type="number" name="price"
+                step="0.01" 
+                min="0"
+                placeholder="0.00" required/>
+              </label>
+            </div>
+
+            <div>
+              <label class="form-label">
+                Introduction:
+                <textarea class="form-control" name="introduction"
+                    rows="3"
+                    placeholder="How to cook it"
+                    required>
+                </textarea>
+              </label>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Create</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <%- include("../components/footer.ejs") %>
+  </body>
+</html>

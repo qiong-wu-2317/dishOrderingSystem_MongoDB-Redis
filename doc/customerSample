@@ -1,0 +1,6 @@
+{
+	id,
+	customer_name,
+	delivery_address,
+	phone_number,
+}

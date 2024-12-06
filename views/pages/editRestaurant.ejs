@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <%- include("../components/head.ejs") %>
+  <body>
+
+    <%- include("../components/navBar.ejs") %>
+
+    <div class="container">
+      <h1>Edit Restaurant</h1>
+
+
+      <% if (msg) { %>
+        <div class="alert alert-primary">
+          <%= msg %>
+        </div>
+      <% } %>
+
+        <form
+        action=" <%= '/restaurants/' + rest.restaurant_id + '/edit' %>"
+        method="POST"
+        class="mb-4"
+        >
+
+        <!-- <div>
+
+        <div>
+            <label class="form-label">
+            Contact:
+            <input
+                class="form-control"
+                type="text"
+                name="contact"
+                value="<%= rest.contact %>"
+            />
+            </label>
+        </div> -->
+
+        <div class="mb-3">
+            <label for="restaurant_id" class="form-label">Restaurant ID:</label>
+            <input type="text" id="restaurant_id" name="restaurant_id" class="form-control" value="<%= rest.restaurant_id %>" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="restaurant_name" class="form-label">Restuarant Name:</label>
+            <input type="text" id="restaurant_name" name="restaurant_name" class="form-control"
+                value="<%= rest.restaurant_name %>"
+                required />
+          </div>
+          <div class="mb-3">
+            <label for="restaurant_address" class="form-label">Restaurant Address:</label>
+            <input
+              type="text"
+              id="restaurant_address"
+              name="restaurant_address"
+              class="form-control"
+              value="<%= rest.restaurant_address %>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="opening_time" class="form-label">Opening Time:</label>
+            <input
+              type="text"
+              id="opening_time"
+              name="opening_time"
+              class="form-control"
+              placeholder="hh:mm AM/PM"
+              value="<%= rest.opening_time %>"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="contact" class="form-label">Contact:</label>
+            <input type="text" id="contact" name="contact" class="form-control"
+                value="<%= rest.contact %>"
+                required />
+          </div>
+
+        <button type="submit" class="btn btn-primary">Edit</button>
+        <a
+            class="btn btn-danger"
+            href="<%= '/restaurants/' + rest.restaurant_id + '/delete' %>"
+            >Delete</a
+        >
+        <a class="btn btn-outline-primary"
+            href="/"
+            >back</a
+        >
+        </form>
+
+        <h2>Restaurant Dishes</h2>
+
+        <ul>
+            <% for (let dish of dishes) { %>
+            <li>
+                <a href="<%= '/dishes/' + dish.dish_id + '/edit'  %>"><%= 'Dish name: '+ dish.dish_name + ', price: ' + dish.price %></a>
+                <a href="<%= '/dishes/' + dish.dish_id + '/delete'   %>">❌</a>
+            </li>
+            <% } %>
+        </ul>
+
+    </div>
+
+    <%- include("../components/footer.ejs") %>
+  </body>
+</html>

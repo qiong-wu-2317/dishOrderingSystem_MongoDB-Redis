@@ -1,0 +1,9 @@
+{
+	id,
+	driver_name,
+	car_model,
+	car_color,
+	driver_license,
+	license_plate,
+	driver_phone_number
+}

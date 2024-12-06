@@ -1,0 +1,40 @@
+{
+	id,
+	order_date,
+	customer: {
+		customer_name,
+		delivery_address,
+		phone_number,
+	},
+	dishes[
+		{
+			dish_name,
+			quantity,
+			price,
+			restaurant:{
+				restaurant_name,
+				address,
+				opening_time,
+				contact
+			}
+		},
+		...
+	],
+	delivery_window:{
+		start_time,
+		end_time,
+	},
+	order_status,
+	driver:{
+		driver_name,
+	}
+	delivery_route:[
+		{
+			start_location,
+			end_location,
+			sequence,
+			start_time,
+			end_time
+		}
+	]
+}

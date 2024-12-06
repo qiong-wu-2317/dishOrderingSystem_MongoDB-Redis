@@ -1,0 +1,12 @@
+{
+	id,
+	dish_name,
+	price,
+	introducation,
+	restaurant:{
+		restaurant_name,
+		address,
+		open_time,
+		contact
+	}
+}

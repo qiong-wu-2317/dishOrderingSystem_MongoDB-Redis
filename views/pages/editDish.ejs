@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <%- include("../components/head.ejs") %>
+  <body>
+
+    <%- include("../components/navBar.ejs") %>
+
+    <div class="container">
+      <h1>Edit Dish</h1>
+
+
+      <% if (msg) { %>
+        <div class="alert alert-primary">
+          <%= msg %>
+        </div>
+      <% } %>
+
+        <form
+            action=" <%= '/dishes/' + dish.dish_id + '/edit' %>"
+            method="POST"
+            class="mb-4"
+        >
+
+        <div class="mb-3">
+            <label for="dish_id" class="form-label">Dish ID:</label>
+            <input type="text" id="dish_id" name="dish_id" class="form-control" value="<%= dish.dish_id %>" disabled />
+          </div>
+          <div class="mb-3">
+            <label for="dish_name" class="form-label">Dish ID:</label>
+            <input type="text" id="dish_name" name="dish_name" class="form-control" value="<%= dish.dish_name %>" />
+          </div>
+          <div class="mb-3">
+            <label for="restaurant_id" class="form-label">Restuarant:</label>
+            <select id="restaurant" name="restaurant_id" class="form-control">
+                <% for (let rest of restaurants) { %>
+                    <option value="<%= rest.restaurant_id %>"
+                        <%= dish.restaurant.restaurant_id === rest.restaurant_id ? 'selected' : '' %>
+                        ><%= rest.restaurant_name %></option>
+                <% } %>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="price" class="form-label">Price:</label>
+            <input
+                class="form-control"
+                type="number" 
+                name="price"
+                step="0.01" 
+                min="0"
+                placeholder="0.00" 
+                value="<%= dish.price %>"
+                required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="introduction" class="form-label">Introduction:</label>
+            <textarea
+              id="introduction"
+              name="introduction"
+              class="form-control"
+              placeholder="How to cook it"
+              required
+            ><%= dish.introduction %></textarea>
+          </div>
+
+        <button type="submit" class="btn btn-primary">Edit</button>
+        <a
+            class="btn btn-danger"
+            href="<%= '/dishes/' + dish.dish_id + '/delete' %>"
+            >Delete</a
+        >
+        <a class="btn btn-outline-primary"
+            href="/dishes"
+            >back</a
+        >
+        </form>
+    </div>
+
+    <%- include("../components/footer.ejs") %>
+  </body>
+</html>
