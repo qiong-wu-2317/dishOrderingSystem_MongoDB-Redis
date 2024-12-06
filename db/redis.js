@@ -1,12 +1,13 @@
 import { createClient } from "redis";
 import { getRestaurants as getRestaurantsFromMongo } from "./api.js"
 
+const key = `restaurantList`;
+const nameKey = `restaurantNames`;
+
 async function getRestaurantsFromCache() {
   const client = await createClient()
     .on("error", (err) => console.log("Redis Client Error", err))
     .connect();
-
-  let key = "restaurantList";
 
   const exists = await client.get(key + ":cached");
 
@@ -50,7 +51,7 @@ async function saveRestaurantsToCache(restaurants) {
     .on("error", (err) => console.log("Redis Client Error", err))
     .connect();
 
-  let key = `restaurantList`;
+  
 
   let before = performance.now();
   client.del(key); // Deletes the list of students
@@ -58,6 +59,7 @@ async function saveRestaurantsToCache(restaurants) {
     for (let restaurant of restaurants) {
       const restaurantKey = await saveRestaurant(restaurant);
       await client.rPush(key, restaurantKey);
+      await client.rPush(nameKey, restaurant.restaurant_name)
     }
     
     await client.set(key + ":cached", 1); // 60 seconds cache
@@ -75,12 +77,12 @@ async function saveRestaurantsToCache(restaurants) {
 
 // Returns the list of students for a classname, checking first in the cache
 async function getRestaurants() {
-  let students = [];
+  let restaurants = [];
   console.log("Checking if the resource is in the cache");
 
   let before = performance.now();
   // Returns false if the students are not in the cache
-  let restaurants = await getRestaurantsFromCache();
+  restaurants = await getRestaurantsFromCache();
   if (!restaurants) {
     console.log(
       "🚫 Resource not found in the cache, checking mongo");
@@ -102,7 +104,7 @@ async function getRestaurants() {
       performance.now() - before
     );
   }
-  return students;
+  return restaurants;
 }
 
 // Cleanup the cache
@@ -130,3 +132,5 @@ before = performance.now();
 // Get the students for the second time, it should be in the cache
 await getRestaurants();
 console.log("⚽️ Restaurant fetched in", performance.now() - before);
+
+

@@ -1,5 +1,6 @@
 import express from 'express';
 import * as db from "../db/api.js";
+import * as redis from "../db/api_redis.js"
 
 
 const router = express.Router();
@@ -12,33 +13,32 @@ router.get("/", async function (req, res, next) {
 
 // http://localhost:3000/references?pageSize=24&page=3&q=John
 router.get("/restaurants", async (req, res, next) => {
-    const query = req.query.query || "";
-    const currentPage = +req.query.currentPage || 1;
-    const pageSize = +req.query.pageSize || 12;
-    const msg = req.query.msg || null;
-    try {
-      let total = await db.getRestaurantCount(query);
-      let restaurants = await db.getRestaurants(query, currentPage, pageSize);
-      res.render("./pages/restaurants", {
-        restaurants,
-        query,
-        msg,
-        currentPage,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      });
-    } catch (err) {
-      next(err);
-    }
+  const query = req.query.query || "";
+  const currentPage = +req.query.currentPage || 1;
+  const pageSize = +req.query.pageSize || 12;
+  const msg = req.query.msg || null;
+  try {      
+    let total = await redis.getRestaurantCount(query);
+    let restaurants = await redis.getRestaurantsPaging(query, currentPage, pageSize);
+    console.log("get restaurants from cache");
+    res.render("./pages/restaurants", {
+      restaurants,
+      query,
+      msg,
+      currentPage,
+      pageSize,
+      totalPages: Math.ceil(total / pageSize),
+    });
+  } catch (err) {
+    next(err);
+  }
 });
 
 
 router.post("/createRestaurant", async (req, res, next) => {
     const rest = req.body
     try {
-        const insertRes = await db.insertRestaurant(rest);
-    
-        console.log("Inserted", insertRes);
+        await redis.insertRestaurant(rest);
         res.redirect("/restaurants/?msg=Inserted");
       } catch (err) {
         console.log("Error inserting", err);
@@ -50,10 +50,9 @@ router.post("/createRestaurant", async (req, res, next) => {
 router.get("/restaurants/:restaurant_id/delete", async (req, res, next) => {
     const restaurant_id = req.params.restaurant_id;
     try {
-      let deleteResult = await db.deleteRestaurantByID(restaurant_id);
+      let deleteResult = await redis.deleteRestaurantByID(restaurant_id);
       await db.deleteDishesByRestaurantID(restaurant_id);
-      console.log(deleteResult)
-      if (deleteResult && deleteResult.acknowledged) {
+      if (deleteResult) {
         res.redirect("/restaurants/?msg=Deleted");
       } else {
         res.redirect("/restaurants/?msg=Error Deleting");
@@ -69,7 +68,8 @@ router.get("/restaurants/:restaurant_id/edit", async (req, res, next) => {
     const restaurant_id = req.params.restaurant_id;
     const msg = req.query.msg || null;
     try {
-      let rest = await db.getRestaurantByID(restaurant_id);
+      let rest = await redis.getRestaurantByID(restaurant_id);
+      rest.prev_name = rest.restaurant_name
       let dishes = await db.getDishesByRestaurantID(restaurant_id);  
       res.render("./pages/editRestaurant", {
         rest: rest,
@@ -86,7 +86,7 @@ router.post("/restaurants/:restaurant_id/edit", async (req, res, next) => {
     const ref = req.body;
   
     try {
-      let updateResult = await db.updateRestaurantByID(restaurant_id, ref);
+      let updateResult = await redis.updateRestaurantByID(restaurant_id, ref);
   
       if (updateResult) {
         res.redirect("/restaurants/?msg=Error Updating");

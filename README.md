@@ -1,43 +1,62 @@
-# dish_ordering_system_MongoDB
-Project 2 Submission by Qiong Wu
+# dishOrderingSystem_MongoDB-Redis
+Project 3 Submission by Qiong Wu
 
 ## Business requirements
 [Business Requirements.pdf](doc/Requirements.pdf)
 
-## Database
-Initial database by running:
-```
-mongorestore --host localhost --port 27017 --archive=db/database.dump --nsInclude='dishOrderSystem.*'
-```
-or 
-
-```
-mongoimport --host localhost --port 27017 --db dishOrderSystem --collection customer --file db/customer.json --type json --jsonArray
-mongoimport --host localhost --port 27017 --db dishOrderSystem --collection dish --file db/dish.json --type json --jsonArray
-mongoimport --host localhost --port 27017 --db dishOrderSystem --collection driver --file db/driver.json --type json --jsonArray
-mongoimport --host localhost --port 27017 --db dishOrderSystem --collection order --file db/order.json --type json --jsonArray
-mongoimport --host localhost --port 27017 --db dishOrderSystem --collection restaurant --file db/restaurant.json --type json --jsonArray
-```
-
-### Backup
-To backup database
-```
-mongodump --db=dishOrderSystem --archive=database.dump
-```
-
-### Queries
-to run 5 queries
+## MongoDB
+Initial MongoDB by running:
 ```
 npm install
-node db/query.js
+npm run initMongo
 ```
+
+## Redis
+Initial Redis by running:
+```
+npm install
+npm run initRedis
+```
+### Redis Data structure
+To implement the caching of restaurants which are considered not modify too often, a linked list and hash maps are uses.
+The linked list keyed as `restaurantList` contains all the restaurant keys and all restaurtants details are store in hash maps keyed as `restaurant:restaurant_id`
+
+### Redis CRUD Operations
+get list of all restaurants
+```
+LRANGE restaurantList 0 -1
+```
+
+get restaurant info by `restaurant_id`
+```
+HGETALL restaurant:<restaurant_id>
+```
+
+add new restaurant to list:
+```
+LPUSH restaurantList restaurant:<restaurant_id>
+```
+
+add new restaurant info:
+```
+HMSET restaurant:<restaurant_id> restaurant_name <restaurant_name> restaurant_address <restaurant_address> opening_time <opening_time> contact <contact>
+```
+
+update restaurant info:
+```
+HMSET restaurant:<restaurant_id> restaurant_name <restaurant_name> restaurant_address <restaurant_address> opening_time <opening_time> contact <contact>
+```
+
+delete restaurant from DB:
+```
+LREM restaurantList 1 restaurant:<restaurant_id>
+DEL restaurant:<restaurant_id>
+```
+
+the CRUD operations are all implemented thru web app
+
 
 ## Application
-if the MongoDB url is not "mongodb://localhost:27017", set Mongo_URL by:
-```
-export Mongo_URL="mongodb://<ip>:<port>"
-```
-
 at project root folder
 ```
 npm install
