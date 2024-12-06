@@ -7,14 +7,12 @@ Project 3 Submission by Qiong Wu
 ## MongoDB
 Initial MongoDB by running:
 ```
-npm install
 npm run initMongo
 ```
 
 ## Redis
 Initial Redis by running:
 ```
-npm install
 npm run initRedis
 ```
 ### Redis Data structure
@@ -66,4 +64,4 @@ npm start
 visit http://localhost:3000/
 
 ### Video Introduction
-https://drive.google.com/file/d/12InVHlqpPnvQ-KInJYxgNCmp_LN9S-Mo/view?usp=sharing
+https://drive.google.com/file/d/1gtiqRDiYHkI_Ymq-cc4mmorMIq9l9nM7/view?usp=sharing
